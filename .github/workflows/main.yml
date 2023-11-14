@@ -80,7 +80,7 @@ jobs:
 
       - name: Generate geosite.dat sha256 hash
         run: |
-          cd ./public
+          cd ./publish
           mv ./dlc.dat ./geosite.dat
           sha256sum geosite.dat > geosite.dat.sha256sum
         
