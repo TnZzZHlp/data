@@ -1,0 +1,94 @@
+name: Build files
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+  push:
+    branches:
+      - master
+    
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set variables
+        run: |
+          echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Get repo
+        run : |
+          git clone https://github.com/Loyalsoldier/geoip
+          git clone https://github.com/tachiyomiorg/tachiyomi-extensions
+          git clone https://github.com/v2fly/domain-list-community
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: ./geoip/go.mod
+          
+      - name: Build geoip files
+        run: |
+          rm ./geoip/config.json
+          cp ./config.json ./geoip
+          cd ./geoip
+          go run ./
+
+      - name: Generate sha256 checksum for dat files
+        run: |
+          cd ./geoip/output/dat || exit 1
+          for name in $(ls *.dat); do
+            sha256sum ${name} > ./${name}.sha256sum
+          done
+          
+      - name: Move files to publish directory
+        run: |
+          mkdir -p publish
+          mv ./geoip/output/dat/*.dat ./geoip/output/dat/*.sha256sum ./publish
+          
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: ./domain-list-community/go.mod
+  
+      - name: Get manga domain
+        run: |
+          python -m pip install --upgrade pip
+          pip install tqdm tld
+          python get_domain.py
+          mv ./manga ./domain-list-community/data
+
+      - name: Build dlc.dat file
+        run: |
+          cd ./domain-list-community
+          go run ./ --outputdir=../public --exportlists=category-ads-all,tld-cn,cn,tld-\!cn,geolocation-\!cn,apple,icloud
+
+      - name: Generate geosite.dat sha256 hash
+        run: |
+          cd ./domain-list-community
+          mv ./dlc.dat ./geosite.dat
+          sha256sum geosite.dat > geosite.dat.sha256sum
+        
+      - name: Git push assets to "release" branch
+        run: |
+          cd publish || exit 1
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b release
+          git add -A
+          git commit -m "${{ env.RELEASE_NAME }}"
+          git remote add data "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f -u data release
