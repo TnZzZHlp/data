@@ -76,7 +76,7 @@ jobs:
       - name: Build geosite.dat file
         run: |
           cd ./domain-list-community
-          go run ./ --outputdir=../public --exportlists=category-ads-all,tld-cn,cn,tld-\!cn,geolocation-\!cn,apple,icloud
+          go run ./ --outputdir=../publish --exportlists=category-ads-all,tld-cn,cn,tld-\!cn,geolocation-\!cn,apple,icloud
 
       - name: Generate geosite.dat sha256 hash
         run: |
