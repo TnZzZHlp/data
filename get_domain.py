@@ -32,7 +32,7 @@ if os.path.exists('manga'):
 else:
     pass
 # 调用函数
-find_domains('./src')
+find_domains('./tachiyomi-extensions/src')
 
 # 用第三方库检测域名是否合法
 from tld import get_tld
