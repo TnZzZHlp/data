@@ -14,13 +14,12 @@
       }
     ],
     "output": [
-      {
-        "type": "v2rayGeoIPDat",
-        "action": "output",
-        "args": {
-          "oneFilePerList": true,
-          "wantedList": ["cn", "private"]
+        {
+              "type": "v2rayGeoIPDat",
+              "action": "output",
+              "args": {
+                "outputName": "geoip.dat"
+              }
         }
-      }
     ]
   }
