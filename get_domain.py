@@ -36,8 +36,8 @@ if os.path.exists('manga'):
 else:
     pass
 # 调用函数
-find_domains('./src/zh')
-find_domains('./src/all')
+find_domains('./tachiyomi-extensions/src/zh')
+find_domains('./tachiyomi-extensions/src/all')
 
 # 用第三方库检测域名是否合法
 # 更新顶级域名列表
