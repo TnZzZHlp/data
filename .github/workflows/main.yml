@@ -60,7 +60,6 @@ jobs:
 
       - name: Get manga domain
         run: |
-          python get_domain.py
           mv ./manga ./domain-list-community/data
 
       - name: Build geosite.dat file
