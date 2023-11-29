@@ -1,4 +1,4 @@
-name: Build files
+name: Get manga domain
 
 on:
   workflow_dispatch:
