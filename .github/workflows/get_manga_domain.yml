@@ -40,12 +40,11 @@ jobs:
 
       - name: Move manga domain
         run: |
-            mv ./manga ./domain-list-community/data
+            mv ./manga
+            rm -r ./tachiyomi-extensions
         
       - name: Git push assets to "main" branch
         run: |
-            cd publish || exit 1
-            git init
             git config --local user.name "github-actions[bot]"
             git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git checkout -b main
