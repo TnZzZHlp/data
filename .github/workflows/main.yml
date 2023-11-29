@@ -1,8 +1,9 @@
 name: Build files
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 12 * * *"
   push:
     branches:
       - main
@@ -10,7 +11,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v4
