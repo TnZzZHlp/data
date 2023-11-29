@@ -57,7 +57,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: latest
+          python-version: 3.8.18
 
       - name: Set up Go
         uses: actions/setup-go@v4
