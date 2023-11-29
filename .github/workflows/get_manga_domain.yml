@@ -1,0 +1,55 @@
+name: Build files
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 */7 * *"
+    
+jobs:
+  build:
+    name: Build
+    runs-on: LeveoServer
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        # This is the version of the action for setting up Python, not the Python version.
+        uses: actions/setup-python@v4
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.x'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      - name: Install dependencies
+        run: |
+            python3 -m pip install --upgrade pip
+            pip3 install -r requirements.txt
+
+      - name: Set variables
+        run: |
+            echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+            echo "RELEASE_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Get repo
+        run : |
+            git clone https://github.com/tachiyomiorg/tachiyomi-extensions
+
+      - name: Get manga domain
+        run : |
+            python3 get_domain.py
+
+      - name: Move manga domain
+        run: |
+            mv ./manga ./domain-list-community/data
+        
+      - name: Git push assets to "main" branch
+        run: |
+            cd publish || exit 1
+            git init
+            git config --local user.name "github-actions[bot]"
+            git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git checkout -b main
+            git add -A
+            git commit -m "${{ env.RELEASE_NAME }}"
+            git remote add data "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+            git push -f -u data release
