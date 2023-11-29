@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v4
@@ -27,7 +27,6 @@ jobs:
       - name: Get repo
         run : |
           git clone https://github.com/Loyalsoldier/geoip
-          git clone https://github.com/tachiyomiorg/tachiyomi-extensions
           git clone https://github.com/v2fly/domain-list-community
 
       - name: Set up Go
@@ -53,21 +52,11 @@ jobs:
         run: |
           mkdir -p publish
           mv ./geoip/output/dat/*.dat ./geoip/output/dat/*.sha256sum ./publish
-          
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8.18
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version-file: ./domain-list-community/go.mod
-  
-      - name: Install Dependence
-        run: |
-          python -m pip install --upgrade pip
-          pip install tqdm tld
 
       - name: Get manga domain
         run: |
