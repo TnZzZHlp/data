@@ -1,7 +1,11 @@
-from math import e
+import ipaddress
 import os
 import re
-from tqdm import tqdm
+import tqdm
+from requests import get
+from tld import get_tld
+from tld.utils import update_tld_names
+
 domain_list = []
 
 def find_domains(path):
@@ -32,17 +36,26 @@ if os.path.exists('manga'):
 else:
     pass
 # 调用函数
-find_domains('./tachiyomi-extensions/src')
+find_domains('./src/zh')
+find_domains('./src/all')
 
 # 用第三方库检测域名是否合法
-from tld import get_tld
-from tld.utils import update_tld_names
-
 # 更新顶级域名列表
 update_tld_names()
 
 # 去重
 domain_list = list(set(domain_list))
+
+# 排除特定域名
+with open('exclude.txt', 'r') as f:
+    exclude = [line.strip() for line in f]
+for domain in domain_list:
+    for exclude_s in exclude:
+        if exclude_s in domain:
+            try:
+                domain_list.remove(domain)
+            except:
+                pass
 
 upperRegex = re.compile(r'[A-Z]')
 # 检测域名是否合法，不合法则删除
@@ -58,27 +71,41 @@ for domain in domain_list:
 
 domain_list = valid_domains
 
+temp_domain = []
 
+# 读取文件中的所有IP CIDR
+with open('cn.txt', 'r') as f:
+    networks = [ipaddress.ip_network(line.strip()) for line in f]
 
-# 排除特定域名
-exclude = ['qq.com', 'android.com', 'www.w3xue.com', 'www.w3cschool.cn', 'iqiyi.com', 'hycdn.cn']
-for domain in domain_list:
-    for exclude_s in exclude:
-        if exclude_s in domain:
-            domain_list.remove(domain)
+is_cn = 0
 
-# 解析域名，如果没有解析到IP地址，则删除
-import socket
-
-valid_domains = []
-for domain in domain_list:
+for domain in tqdm.tqdm(domain_list):
+    headers = {'Accept': 'application/dns-json'}
+    params = {'name': domain, 'type': 'A', 'edns_client_subnet': '122.119.122.0/24'}
     try:
-        ip = socket.gethostbyname(domain)
-        valid_domains.append(domain)
+        resp = get('https://223.5.5.5/resolve', headers=headers, params=params).json()
     except:
-        pass
+        continue
 
-domain_list = valid_domains
+    # 判断Answer是否为空
+    if 'Answer' not in resp.keys():
+        continue
+
+    answers = resp['Answer']
+    for answer in answers:
+        # 判断是否为IP地址
+        if answer['type'] == 1:
+            ip = answer['data']
+            # 判断是否为国内IP
+            if ipaddress.ip_address(ip) in networks:
+                is_cn = 1
+    if is_cn == 1:
+        is_cn = 0
+        break
+    else:
+        temp_domain.append(domain)
+
+domain_list = temp_domain
 
 # 保存结果
 with open('manga', 'w', encoding='utf-8') as f:
