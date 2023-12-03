@@ -6,9 +6,12 @@ document.run
 div.info
 it.page
 ac.qq.com
+obj.name
+komga.org
 s3-ap-northeast-1.amazonaws.com
 document.id
 www.pixiv.net
+stevenyomi.github.io
 entry.name
 format.id
 task.name
@@ -20,12 +23,14 @@ raw.githubusercontent.com
 it.id
 drive.google.com
 www.muwai.com
+tachiyomi.org
 it.is
 page.link
 sort.id
 publisher.id
 gmail.com
 tag.id
+div.name
 td.no
 chp.name
 filter.name
