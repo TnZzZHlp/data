@@ -24,7 +24,7 @@ jobs:
       - name: Get repo
         run : |
           git clone https://github.com/Loyalsoldier/geoip
-          git clone https://github.com/v2fly/domain-list-community
+        # git clone https://github.com/v2fly/domain-list-community
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -50,25 +50,25 @@ jobs:
           mkdir -p publish
           mv ./geoip/output/dat/*.dat ./geoip/output/dat/*.sha256sum ./publish
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version-file: ./domain-list-community/go.mod
+      # - name: Set up Go
+      #   uses: actions/setup-go@v4
+      #   with:
+      #     go-version-file: ./domain-list-community/go.mod
 
-      - name: Get manga domain
-        run: |
-          mv ./manga ./domain-list-community/data
+      # - name: Get manga domain
+      #   run: |
+      #     mv ./manga ./domain-list-community/data
 
-      - name: Build geosite.dat file
-        run: |
-          cd ./domain-list-community
-          go run ./ --outputdir=../publish
+      # - name: Build geosite.dat file
+      #   run: |
+      #     cd ./domain-list-community
+      #     go run ./ --outputdir=../publish
 
-      - name: Generate geosite.dat sha256 hash
-        run: |
-          cd ./publish
-          mv ./dlc.dat ./geosite.dat
-          sha256sum geosite.dat > geosite.dat.sha256sum
+      # - name: Generate geosite.dat sha256 hash
+      #   run: |
+      #     cd ./publish
+      #     mv ./dlc.dat ./geosite.dat
+      #     sha256sum geosite.dat > geosite.dat.sha256sum
         
       - name: Git push assets to "release" branch
         run: |
