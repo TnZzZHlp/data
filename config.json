@@ -9,6 +9,22 @@
         }
       },
       {
+        "type": "text",
+        "action": "add",
+        "args": {
+          "name": "cn",
+          "uri": "https://ispip.clang.cn/all_cn_cidr.txt"
+        }
+      },
+      {
+        "type": "text",
+        "action": "add",
+        "args": {
+          "name": "cn",
+          "uri": "https://ispip.clang.cn/all_cn_ipv6.txt"
+        }
+      },
+      {
         "type": "private",
         "action": "add"
       },
