@@ -1,0 +1,33 @@
+{
+    "input": [
+      {
+        "type": "text",
+        "action": "add",
+        "args": {
+          "name": "cn",
+          "uri": "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All.txt"
+        }
+      },
+      {
+        "type": "private",
+        "action": "add"
+      },
+      {
+        "type": "text",
+        "action": "add",
+        "args": {
+          "name": "telegram",
+          "uri": "https://core.telegram.org/resources/cidr.txt"
+       }
+    }
+    ],
+    "output": [
+        {
+              "type": "v2rayGeoIPDat",
+              "action": "output",
+              "args": {
+                "outputName": "geoip.dat"
+              }
+        }
+    ]
+  }
